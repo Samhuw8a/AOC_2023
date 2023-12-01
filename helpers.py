@@ -18,6 +18,7 @@ T = TypeVar("T")
 cat = "".join
 inf = float("inf")
 flatten = chain.from_iterable
+DIGITS: tuple = tuple(str(i) for i in range(10))
 
 
 def mapl(f: Callable, iterable) -> list:
