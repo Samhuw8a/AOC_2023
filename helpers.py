@@ -1,77 +1,76 @@
 import re
 from itertools import chain, product
+from typing import Callable, Union, Iterable, Any
 
-
-# Most of this is shamelessly stolen from Peter Norvig.
 
 cat = "".join
 inf = float("inf")
 flatten = chain.from_iterable
 
 
-def mapl(f, iterable):
+def mapl(f: Callable, iterable)->list:
     return list(map(f, iterable))
 
 
-def mapt(f, iterable):
+def mapt(f: Callable, iterable)->tuple:
     return tuple(map(f, iterable))
 
 
-def filterl(f, iterable):
+def filterl(f: Callable, iterable)->list:
     return list(filter(f, iterable))
 
 
-def parse_multiline_string(s, datatype=str, sep="\n"):
+def parse_multiline_string(s:str, datatype:type = str, sep:str ="\n")->list:
     return mapl(datatype, s.split(sep))
 
 
-def read_input(filename, datatype=str, sep="\n"):
+def read_input(filename:Union[str,int], datatype:type =str, sep:str="\n")->list:
     filename = f"{filename:02d}" if isinstance(filename, int) else filename
     with open(f"inputs/{filename}.txt") as f:
         return parse_multiline_string(f.read(), datatype, sep)
 
 
-def read_input_line(filename, sep=""):
+def read_input_line(filename:Union[str,int], sep:str="")->str:
     filename = f"{filename:02d}" if isinstance(filename, int) else filename
     with open(f"inputs/{filename}.txt") as f:
         contents = f.read().strip()
         return contents if not sep else contents.split(sep)
 
 
-def digits(line):
+def digits(line:str)->list:
     return mapl(int, line)
 
 
-def integers(text, negative=True):
+def integers(text:str, negative:bool=True)->tuple:
     return mapt(int, re.findall(r"-?\d+" if negative else r"\d+", text))
 
 
-def first_int(text):
+def first_int(text:str)->int:
     if m := re.search(r"-?\d+", text):
         return int(m.group(0))
 
 
-def count_if(iterable, pred=bool):
+def count_if(iterable:Iterable, pred:Callable[[Any],bool]=bool)->int:
     return sum(1 for item in iterable if pred(item))
 
 
-def first(iterable, default=None):
+def first(iterable:Iterable, default:Any=None):
     return next(iter(iterable), default)
 
 
-def filter_first(iterable, pred):
+def filter_first(iterable:Iterable, pred:Callable[[Any],bool]):
     return first(el for el in iterable if pred(el))
 
 
-def move_point(a, b):
+def move_point(a:tuple, b:tuple)->tuple:
     return tuple(p + q for p, q in zip(a, b))
 
 
-def manhattan(a, b=(0, 0)):
+def manhattan(a:tuple, b:tuple=(0, 0))->int:
     return sum(abs(p - q) for p, q in zip(a, b))
 
 
-def sign(n):
+def sign(n:int)->int:
     if n > 0:
         return 1
     elif n < 0:
@@ -80,24 +79,24 @@ def sign(n):
         return 0
 
 
-def print_2d(lines):
+def print_2d(lines:str)->None:
     for line in lines:
         print(cat(line))
 
 
-def maxval(d):
+def maxval(d:dict)->Any:
     return max(d.values())
 
 
-def transpose(matrix):
+def transpose(matrix:list)->list:
     return list(zip(*matrix))
 
 
-def bin2int(s):
+def bin2int(s:Any)->int:
     return int(s, 2)
 
 
-def neighbours(x, y, amount=4):
+def neighbours(x:int, y:int, amount:int=4)->tuple:
     assert amount in {4, 5, 8, 9}
     for dy, dx in product((-1, 0, 1), repeat=2):
         if (
@@ -109,7 +108,7 @@ def neighbours(x, y, amount=4):
             yield (x + dx, y + dy)
 
 
-def complex_neighbours(pt, amount=4):
+def complex_neighbours(pt:T, amount:int=4)->T:
     assert amount in {4, 5, 8, 9}
     for dy, dx in product((-1, 0, 1), repeat=2):
         if (
@@ -121,7 +120,7 @@ def complex_neighbours(pt, amount=4):
             yield pt + dx + dy * 1j
 
 
-def neighbours_3d(x, y, z):
+def neighbours_3d(x:int, y:int, z:int)->list:
     yield from [
         (x - 1, y, z),
         (x + 1, y, z),
@@ -132,7 +131,7 @@ def neighbours_3d(x, y, z):
     ]
 
 
-def list2grid(lines, pred=None):
+def list2grid(lines:list, pred:Callable[[Any],bool]=None)->dict:
     return {
         (x, y): val
         for y, line in enumerate(lines)
@@ -141,7 +140,7 @@ def list2grid(lines, pred=None):
     }
 
 
-def grid2list(grid, pred=bool):
+def grid2list(grid:dict, pred:Callable[[Any],bool]=bool)->list:
     min_x, min_y = map(min, zip(*grid))
     if min_x < 0 or min_y < 0:
         raise ValueError
