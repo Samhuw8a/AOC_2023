@@ -63,7 +63,6 @@ def part_two() -> None:
         if val == "*":
             found = 0
             gears: list = []
-            found_gears: list = []
             for nx, ny in neighbours(x, y, 8):
                 nval = None
                 try:
@@ -73,11 +72,7 @@ def part_two() -> None:
 
                 if nval and nval != "*":
                     num, numc = nval
-                    if num in gears:
-                        pass
-                    else:
-                        for g in numc:
-                            found_gears.append(g)
+                    if num not in gears:
                         found += 1
                         gears.append(num)
 
