@@ -60,7 +60,7 @@ def integers(text: str, negative: bool = True) -> tuple:
     return mapt(int, re.findall(r"-?\d+" if negative else r"\d+", text))
 
 
-def first_int(text: str) -> Optional[int]:
+def first_int(text: str) -> Any:
     if m := re.search(r"-?\d+", text):
         return int(m.group(0))  # type:ignore
     return None
