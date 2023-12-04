@@ -4,15 +4,15 @@ input_1 = read_input_line(1, sep="\n")
 test_input = read_input_line("test_01", sep="\n")
 
 WORDS = {
+    "one": 1,
+    "two": 2,
     "three": 3,
     "four": 4,
     "five": 5,
     "six": 6,
     "seven": 7,
-    "nine": 9,
-    "two": 2,
     "eight": 8,
-    "one": 1,
+    "nine": 9,
 }
 
 
@@ -35,10 +35,10 @@ def problem_1() -> None:
     tot = 0
     for line in input_1:
         nums = extract_num_from_line(line)
-        print(nums[0] + nums[-1])
+        #  print(nums[0] + nums[-1])
         num = int(nums[0] + nums[-1])
         tot += num
-    print(tot)
+    print("Part_Two", tot)
 
 
 problem_1()

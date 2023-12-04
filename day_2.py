@@ -1,15 +1,15 @@
 from helpers import *
 
 games = read_input_line(2, sep="\n")
-
 #  games = read_input_line("test_02", sep="\n")
 
 max_cubes = {"red": 12, "green": 13, "blue": 14}
 
 tot = 0
 for game in games:
-    id = int(game.split(":")[0].split(" ")[1])
-    rawhands = game.split(":")[1].split(";")
+    seperated = game.split(":")
+    id = int(seperated[0].split(" ")[1])
+    rawhands = seperated[1].split(";")
     hands = mapl(lambda x: x.split(","), rawhands)
     hands = list(
         mapl(lambda x: (first_int(x.strip()), x.strip().split(" ")[1]), hand)
