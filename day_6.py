@@ -27,14 +27,18 @@ def part_one() -> None:
 def part_two() -> None:
     input_6_2 = read_input_line("06_2", sep="\n")
     #  input_6_2 = read_input_line("test_06_2", sep="\n")
-
     t = integers(input_6_2[0].split(":")[1])[0]  # type:ignore
     d = integers(input_6_2[1].split(":")[1])[0]  # type:ignore
-    num = 0
-    for i in range(1, t):
+    nums: list = []
+    for i in autorange(1, t):
         if distance(i, t) > d:
-            num += 1
-    print("Part Two:", num)
+            nums.append(i)
+            break
+    for i in autorange(t, 1):
+        if distance(i, t) > d:
+            nums.append(i)
+            break
+    print("Part Two:", nums[1] - nums[0] + 1)
 
 
 part_one()
