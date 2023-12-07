@@ -7,7 +7,6 @@ from typing import (
     Any,
     TypeVar,
     Sequence,
-    Optional,
     Generator,
     Dict,
 )
