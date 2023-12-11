@@ -10,29 +10,44 @@ class DIR(Enum):
     W = (0, -1)
 
 
-class Connection:
-    __slots__ = ("d1", "d2")
+def inc_cord(cord: tuple, d: DIR) -> tuple:
+    x, y = cord
+    dx, dy = d.value
+    return (x + dx, y + dy)
 
-    def __init__(self, d1: DIR, d2: DIR):
+
+class Connection:
+    __slots__ = ("d1", "d2", "string")
+
+    def __init__(self, d1: DIR, d2: DIR, string: str = "N/A"):
         self.d1 = d1
         self.d2 = d2
-
-    def _is_pipe_dir(self, d: DIR) -> bool:
-        return d == self.d1 or d == self.d2
+        self.string = string
 
     def next(self, d: DIR) -> DIR:
-        if not self._is_pipe_dir(d):
-            raise IndexError("Die Richtung ist nicht teil der Verbindung")
-        return self.d1 if d == self.d2 else self.d2
+        if d == self.d1:
+            return self.d2
+        elif d == self.d2:
+            return self.d1
+        else:
+            raise IndexError
+
+    def __repr__(self):
+        return self.string
+
+
+class StraightConnection(Connection):
+    def next(self, d: DIR) -> DIR:
+        return d
 
 
 PIPES = {
-    "|": Connection(DIR.N, DIR.S),
-    "-": Connection(DIR.E, DIR.W),
-    "L": Connection(DIR.N, DIR.E),
-    "J": Connection(DIR.N, DIR.W),
-    "7": Connection(DIR.S, DIR.W),
-    "F": Connection(DIR.S, DIR.E),
+    "|": StraightConnection(DIR.N, DIR.S, string="|"),
+    "-": StraightConnection(DIR.E, DIR.W, string="-"),
+    "L": Connection(DIR.N, DIR.E, string="L"),
+    "J": Connection(DIR.N, DIR.W, string="J"),
+    "7": Connection(DIR.S, DIR.W, string="7"),
+    "F": Connection(DIR.S, DIR.E, string="F"),
 }
 
 
@@ -48,15 +63,16 @@ for i in input_10:
         pipe_row.append(PIPES.get(j, j))
     pipe_network.append(pipe_row)
 
-G = list2grid(pipe_network)
-start = tuple(i for i in G.keys() if G[i] == "S")[0]
-print(start)
+pipes = list2grid(pipe_network)
+start = tuple(i for i in pipes.keys() if pipes[i] == "S")[0]
 
-dist = {k: INFINITY for k in G.keys()}
-dist[start] = 0
+dist = {k: 0 for k in pipes.keys()}
+G: dict = {}
 
-for nx, ny in neighbors4(pipe_network, *start):
-    cur = (nx, ny)
-    while cur != start:
-        if isinstance(G[cur], Connection):
-            cur = G[cur].next()
+for c, v in pipes.items():
+    if isinstance(v, str):
+        G[c] = tuple()
+    else:
+        G[c] = (inc_cord(c, v.d1), inc_cord(c, v.d2))
+
+print(G)
