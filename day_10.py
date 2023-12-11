@@ -66,7 +66,7 @@ for i in input_10:
 pipes = list2grid(pipe_network)
 start = tuple(i for i in pipes.keys() if pipes[i] == "S")[0]
 
-dist = {k: 0 for k in pipes.keys()}
+dist: defaultdict = defaultdict(lambda: INFINITY)
 G: dict = {}
 
 for c, v in pipes.items():
@@ -75,4 +75,27 @@ for c, v in pipes.items():
     else:
         G[c] = (inc_cord(c, v.d1), inc_cord(c, v.d2))
 
-print(G)
+start_neighb = []
+for i in DIR:
+    nstart = inc_cord(start, i)
+    if isinstance(pipes[nstart], Connection):
+        print(pipes[nstart], i)
+        start_neighb.append(nstart)
+G[start] = start_neighb
+
+q = deque([(0, start[0], start[1])])
+visited: set = set()
+
+while q:
+    d, x, y = q.popleft()
+
+    dist[(x, y)] = min(dist[(x, y)], d)
+
+    if (x, y) in visited:
+        continue
+
+    visited.add((x, y))
+    q.extend((d + 1, c[0], c[1]) for c in G[(x, y)])
+
+print(max(dist.values()))
+print(dist)
