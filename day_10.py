@@ -1,6 +1,14 @@
 from utils.all import *
-from typing import Any, Iterator
-from helpers import list2grid
+from typing import Any, Callable
+
+
+def list2grid(lines: list, pred: Callable[[Any], bool] = None) -> dict:
+    return {
+        (y, x): val
+        for y, line in enumerate(lines)
+        for x, val in enumerate(line)
+        if (pred(val) if pred else True)  # type:ignore
+    }
 
 
 class DIR(Enum):
@@ -8,6 +16,18 @@ class DIR(Enum):
     S = (1, 0)
     E = (0, 1)
     W = (0, -1)
+
+
+def inv_dir(d: DIR) -> DIR:
+    if d == DIR.N:
+        return DIR.S
+    if d == DIR.S:
+        return DIR.N
+    if d == DIR.E:
+        return DIR.W
+    if d == DIR.W:
+        return DIR.E
+    return d
 
 
 def inc_cord(cord: tuple, d: DIR) -> tuple:
@@ -25,9 +45,9 @@ class Connection:
         self.string = string
 
     def next(self, d: DIR) -> DIR:
-        if d == self.d1:
+        if d == inv_dir(self.d1):
             return self.d2
-        elif d == self.d2:
+        elif d == inv_dir(self.d2):
             return self.d1
         else:
             raise IndexError
@@ -51,8 +71,8 @@ PIPES = {
 }
 
 
-#  input_10 = rüad_input_line(10,sep = "\n")
-input_10 = read_input_line("test_10", sep="\n")
+input_10 = read_input_line(10, sep="\n")
+#  input_10 = read_input_line("test_10", sep="\n")
 
 input_10 = mapl(list, input_10)
 
@@ -78,12 +98,13 @@ for c, v in pipes.items():
 start_neighb = []
 for i in DIR:
     nstart = inc_cord(start, i)
+    if not pipes.get(nstart):
+        continue
     if isinstance(pipes[nstart], Connection):
-        print(pipes[nstart], i)
         start_neighb.append(nstart)
 G[start] = start_neighb
 
-q = deque([(0, start[0], start[1])])
+q = deque([(0, *start)])
 visited: set = set()
 
 while q:
@@ -94,8 +115,9 @@ while q:
     if (x, y) in visited:
         continue
 
+    print(x, y, pipes[(x, y)], d)
     visited.add((x, y))
-    q.extend((d + 1, c[0], c[1]) for c in G[(x, y)])
+    q.extend((d + 1, *c) for c in G[(x, y)])
 
 print(max(dist.values()))
-print(dist)
+#  print(dist)
