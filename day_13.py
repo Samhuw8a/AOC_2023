@@ -69,5 +69,4 @@ for t, indexes, found in answers:
         cols += found
 
 print(rows, cols)
-
 print("Part One:", (cols + 100 * rows))
