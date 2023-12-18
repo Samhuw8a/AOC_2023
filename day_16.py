@@ -47,7 +47,7 @@ def nxt(char: str, d: DIR) -> tuple:
     return ()
 
 
-#  input_16 = read_input_line(16,sep="\n")
+input_16 = read_input_line(16, sep="\n")
 input_16 = read_input_line("test_16", sep="\n")
 input_16 = mapl(list, input_16)
 vis = copy.deepcopy(input_16)
@@ -63,29 +63,28 @@ d = DIR.R
 visit = deque([((0, 0), d)])
 seen: defaultdict = defaultdict(int)
 while visit:
-    c, d = visit.popleft()
+    c, d = visit.pop()
     char = G.get(c)
     if not char:
-        #  print("Index Error", c)
         continue
-    seen[c] += 1
+    nc: tuple = nxt(char, d)
+    if (c, d) in seen:
+        continue
     vis[c[0]][c[1]] = "#"
-    nc = nxt(char, d)
-    if all(inc(c, x) in seen for x in nc):
-        continue
+    seen[c] += 1
     visit.extend(((inc(c, d), d) for d in nc))
 
+print()
+for o in input_16:
+    for c in o:
+        print(c, end="")
+    print()
+
+print()
+for i in vis:
+    for j in i:
+        print(j, end="")
+    print()
+
 #  print(seen)
-#  print(len(seen.keys()))
-#
-#  print()
-#  for o in input_16:
-#      for c in o:
-#          print(c, end="")
-#      print()
-#
-#  print()
-#  for i in vis:
-#      for j in i:
-#          print(j, end="")
-#      print()
+print(len(seen.keys()))
