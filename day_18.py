@@ -20,9 +20,9 @@ input_18 = read_input_line(18, sep="\n")
 input_18 = read_input_line("test_18", sep="\n")
 
 # Part Two
-#  input_18 = mapl(extract_from_hex, input_18)
+input_18 = mapl(extract_from_hex, input_18)
 # Part One
-input_18 = mapl(lambda x: (x.split(" ")[0], int(x.split(" ")[1])), input_18)
+#  input_18 = mapl(lambda x: (x.split(" ")[0], int(x.split(" ")[1])), input_18)
 
 tot = 0
 uheight = 0
@@ -47,7 +47,7 @@ for d, n in input_18:
         if y < 0:
             llenght = min(llenght, y)
 
-assert x == 0 and y == 0
+#  assert x == 0 and y == 0
 
 height = uheight + dheight
 lenght = llenght + rlenght
