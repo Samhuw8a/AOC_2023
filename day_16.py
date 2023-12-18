@@ -48,7 +48,7 @@ def nxt(char: str, d: DIR) -> tuple:
 
 
 input_16 = read_input_line(16, sep="\n")
-input_16 = read_input_line("test_16", sep="\n")
+#  input_16 = read_input_line("test_16", sep="\n")
 input_16 = mapl(list, input_16)
 vis = copy.deepcopy(input_16)
 
@@ -59,20 +59,29 @@ G: dict = {
 }
 
 
+tot = 0
 d = DIR.R
 visit = deque([((0, 0), d)])
 seen: defaultdict = defaultdict(int)
 while visit:
-    c, d = visit.pop()
-    char = G.get(c)
-    if not char:
-        continue
-    nc: tuple = nxt(char, d)
-    if (c, d) in seen:
-        continue
-    vis[c[0]][c[1]] = "#"
-    seen[c] += 1
-    visit.extend(((inc(c, d), d) for d in nc))
+    c, d = visit.popleft()
+    while G.get(c) and (c, d) not in seen:
+        seen[(c, d)] += 1
+        char = G.get(c, "")
+        vis[c[0]][c[1]] = "#"
+        if char == "-" and d in (DIR.U, DIR.D):
+            d = DIR.R
+            visit.append((inc(c, DIR.L), DIR.L))
+        if char == "|" and d in (DIR.L, DIR.R):
+            d = DIR.D
+            visit.append((inc(c, DIR.U), DIR.U))
+
+        else:
+            d = nxt(char, d)[0]
+        dx, dy = d.value
+        cx, cy = c
+        c = (cx + dx, dy + cy)
+
 
 print()
 for o in input_16:
@@ -83,8 +92,9 @@ for o in input_16:
 print()
 for i in vis:
     for j in i:
+        tot += j == "#"
         print(j, end="")
     print()
 
+print(tot)
 #  print(seen)
-print(len(seen.keys()))
