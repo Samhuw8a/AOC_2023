@@ -6,12 +6,21 @@ def list2grid(l: list) -> dict:
     return {(x, y): l[x][y] for x in range(len(l)) for y in range(len(l[0]))}
 
 
-def neighbor_tot(coords: tuple, total: int) -> Any:
+def neighbor_tot(coords: tuple, total: int, G: dict) -> Any:
     x, y = coords
-    for i in range(1, 4):
-        yield ((x + i, y), total)
-        yield ((x, y + i), total)
-        yield ((x, y - i), total)
+    for i in range(1, 3):
+        yield (
+            (x + i, y),
+            total + sum(G.get((coords[0] + j, coords[1]), 0) for j in range(i)),
+        )
+        yield (
+            (x, y + i),
+            total + sum(G.get((coords[0], coords[1] + j), 0) for j in range(i)),
+        )
+        yield (
+            (x, y - i),
+            total + sum(G.get((coords[0], coords[1] - j), 0) for j in range(i)),
+        )
 
 
 input_17 = read_input_line(17, sep="\n")
@@ -21,21 +30,21 @@ start = (0, 0)
 end = (len(input_17) - 1, len(input_17[0]) - 1)
 
 G = list2grid(input_17)
-visit: list = [(start, 0)]
-heat_loss: list = []
-seen: set = set()
+visit: deque = deque([(start, 0, set())])
+heat_loss: list = [INFINITY]
 
 while visit:
-    cur, loss = heapq.heappop(visit)  # type: ignore
+    cur, loss, seen = visit.pop()  # type: ignore
     if not G.get(cur) or cur in seen:
+        continue
+    if loss > min(heat_loss):
         continue
     seen.add(cur)
     if cur == end:
         heat_loss.append(loss)
         print(loss)
         continue
-    loss += G[cur]
-    for i in neighbor_tot(cur, loss):
-        heapq.heappush(visit, i)
+    for i in neighbor_tot(cur, loss, G):
+        visit.append((*i, seen))
 
 print("Part One:", heat_loss)
